@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Christmas Wishlist</title>
+  <meta name="description" content="Christmas Wishlist — easy to browse, search, and mark items as bought." />
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#101b33;
+      --muted:#9fb2d1;
+      --text:#eaf1ff;
+      --accent:#ff4d7d;
+      --accent2:#5be7c4;
+      --border:rgba(255,255,255,.08);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background:
+        radial-gradient(1200px 600px at 20% -10%, rgba(255,77,125,.25), transparent 60%),
+        radial-gradient(900px 500px at 90% 0%, rgba(91,231,196,.18), transparent 55%),
+        linear-gradient(180deg, #070b14, var(--bg) 35%, #070b14);
+      color:var(--text);
+      line-height:1.35;
+    }
+    a{color:inherit}
+    .wrap{max-width:1050px;margin:0 auto;padding:28px 18px 44px}
+    header{
+      display:flex;gap:16px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;
+      margin-bottom:18px;
+    }
+    .title{
+      display:flex;flex-direction:column;gap:8px;
+    }
+    h1{
+      margin:0;
+      letter-spacing:.3px;
+      font-size:clamp(26px, 3vw, 40px);
+      line-height:1.05;
+    }
+    .sub{
+      color:var(--muted);
+      font-size:14px;
+      max-width:60ch;
+    }
+    .toolbar{
+      display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:flex-end;
+    }
+    .pill{
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--border);
+      border-radius:999px;
+      padding:10px 12px;
+      display:flex;gap:10px;align-items:center;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+    .pill input{
+      background:transparent;border:0;outline:none;color:var(--text);
+      min-width:240px;font-size:14px;
+    }
+    button{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      border-radius:999px;
+      padding:10px 12px;
+      cursor:pointer;
+      box-shadow: var(--shadow);
+      transition:.15s transform ease, .15s opacity ease;
+    }
+    button:hover{transform:translateY(-1px)}
+    button:active{transform:translateY(0px);opacity:.9}
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap:14px;
+      margin-top:16px;
+    }
+    .card{
+      grid-column: span 12;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card h2{
+      margin:0;
+      padding:16px 16px 10px;
+      font-size:18px;
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      border-bottom:1px solid var(--border);
+    }
+    .badge{
+      font-size:12px;
+      color:var(--muted);
+      border:1px solid var(--border);
+      padding:6px 10px;border-radius:999px;
+      background:rgba(0,0,0,.15);
+    }
+    ul{list-style:none;margin:0;padding:10px 10px 14px}
+    li{
+      display:flex;gap:10px;align-items:flex-start;
+      padding:10px 10px;
+      border-radius:14px;
+      border:1px solid transparent;
+    }
+    li:hover{border-color:var(--border);background:rgba(0,0,0,.12)}
+    .chk{
+      margin-top:2px;
+      width:18px;height:18px;
+      accent-color: var(--accent);
+      flex:0 0 auto;
+    }
+    .item{
+      display:flex;flex-direction:column;gap:6px;min-width:0;
+      flex:1;
+    }
+    .name{
+      font-size:14px;
+      word-wrap:break-word;
+    }
+    .meta{
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+      font-size:12px;color:var(--muted);
+    }
+    .tag{
+      border:1px solid var(--border);
+      padding:4px 8px;border-radius:999px;
+      background:rgba(0,0,0,.12);
+    }
+    .actions{
+      display:flex;gap:8px;align-items:center;
+      flex:0 0 auto;
+    }
+    .link{
+      font-size:12px;
+      color:var(--text);
+      text-decoration:none;
+      border:1px solid var(--border);
+      padding:6px 10px;border-radius:999px;
+      background:rgba(0,0,0,.15);
+    }
+    .link:hover{border-color:rgba(255,255,255,.18)}
+    .bought .name{opacity:.55;text-decoration:line-through}
+    .bought .meta{opacity:.6}
+    footer{
+      margin-top:18px;
+      color:var(--muted);
+      font-size:12px;
+      display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;
+    }
+    @media (min-width: 820px){
+      .card.span6{grid-column: span 6;}
+    }
+    @media print{
+      body{background:#fff;color:#000}
+      .pill, button, .actions {display:none !important}
+      .card{box-shadow:none}
+      .sub{color:#333}
+      .badge{color:#333}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="title">
+        <h1>🎄 Christmas Wishlist</h1>
+        <div class="sub">
+          Everything (except cosmetics, clothes, and shoes) is Amazon. You can search, print, and mark items as bought — it saves on this device.
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="pill" title="Search items">
+          🔎 <input id="search" type="search" placeholder="Search: iPhone, vanity, nail drill…" />
+        </div>
+        <button id="copyBtn" title="Copy wishlist text">Copy list</button>
+        <button id="resetBtn" title="Clear all bought checkmarks">Reset bought</button>
+        <button onclick="window.print()" title="Print">Print</button>
+      </div>
+    </header>
+
+    <main class="grid" id="grid">
+
+      <!-- Furniture -->
+      <section class="card span6" data-section="Furniture">
+        <h2>Furniture <span class="badge">3 items</span></h2>
+        <ul>
+          <li data-name="Makeup Vanity Desk with Lights 45.5 Large Vanity with Mirror and Lights in 3 Modes Vanity with Power Outlet Vanity Desk with 5 Drawers 2 Cabinets Shelves for Bedroom White" data-tags="amazon,furniture">
+            <input class="chk" type="checkbox" />
+            <div class="item">
+              <div class="name">Makeup Vanity Desk with Lights, 45.5" large vanity w/ mirror (3 modes), power outlet, 5 drawers + 2 cabinets + shelves (white)</div>
+              <div class="meta">
+                <span class="tag">Amazon</span><span class="tag">White</span>
+              </div>
+            </div>
+            <div class="actions">
+              <a class="link" target="_blank" rel="noopener" href="https://www.amazon.com/s?k=Makeup+Vanity+Desk+with+Lights+45.5+large+vanity+power+outlet+5+drawers+2+cabinets+white">Search</a>
+            </div>
+          </li>
+
+          <li data-name="Nrizc Velvet Office Desk Chair" data-tags="amazon,furniture,chair">
+            <input class="chk" type="checkbox" />
+            <div class="item">
+              <div class="name">Nrizc Velvet Office Desk Chair</div>
+              <div class="meta">
+                <span class="tag">Amazon</span><span class="tag">Chair</span>
+              </div>
+            </div>
+            <div class="actions">
+              <a class="link" target="_blank" rel="noopener" href="https://www.amazon.com/s?k=Nrizc+Velvet+Office+Desk+Chair">Search</a>
+            </div>
+          </li>
+
+          <li data-name="Manicure Table Nail Station with Glass Top Dust Collector 4 Dust Bags Storage Drawers Cabinets Nail Desk Beauty Salon Workstation White" data-tags="amazon,furniture,nails">
+            <input class="chk" type="checkbox" />
+            <div class="item">
+              <div class="name">Manicure Table / Nail Station (glass top), dust collector + 4 bags, storage drawers & cabinets (white)</div>
+              <div class="meta">
+                <span class="tag">Amazon</span><span class="tag">Nail station</span>
+              </div>
+            </div>
+            <div class="actions">
+              <a class="link" target="_blank" rel="noopener" href="https://www.amazon.com/s?k=Manicure+Table+Nail+Station+Glass+Top+Dust+Collector+4+Dust+Bags+Storage+Drawers+Cabinets+White">Search</a>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Electronics -->
+      <section class="card span6" data-section="Electronics">
+        <h2>Electronics <span class="badge">3 items</span></h2>
+        <ul>
+          <li data-name="Apple iPhone 16 US Version 128GB White" data-tags="electronics,iphone">
+            <input class="chk" type="checkbox" />
+            <div class="item">
+              <div class="name">Apple iPhone 16 — US version, 128GB (white)</div>
+              <div class="meta">
+                <span class="tag">128GB</span><span class="tag">White</span>
+              </div>
+            </div>
+            <div class="actions">
+              <a class="link" target="_blank" rel="noopener" href="https://www.amazon.com/s?k=Apple+iPhone+16+US+Version+128GB+White">Search</a>
+            </div>
+          </li>
+
+          <li data-name="Beats Solo 4 Wireless Bluetooth On-Ear Headphones Cloud pink" data-tags="electronics,headphones">
+            <input class="chk" type="checkbox" />
+            <div class="item">
+              <div class="name">Beats Solo 4 — wireless Bluetooth on-ear headphones (cloud pink)</div>
+              <div class="meta">
+                <span class="tag">Cloud pink</span><span class="tag">Bluetooth</span>
+              </div>
+            </div>
+            <div class="actions">
+              <a class="link" target="_blank" rel="noopener" href="https://www.amazon.com/s?k=Beats+Solo+4+Wireless+Bluetooth+On-Ear+Headphones+Cloud+Pink">Search</a>
+            </div>
+          </li>
+
+          <li data-name="Apple Watch SE Starlight" data-tags="electronics,watch">
+            <input class="chk" type="checkbox" />
+            <div class="item">
+              <div class="name">Apple Watch SE (starlight)</div>
+              <div class="meta">
+                <span class="tag">Starlight</span>
+              </div>
+            </div>
+            <div class="actions">
+              <a class="link" target="_blank" rel="noopener" href="https://www.amazon.com/s?k=Apple+Watch+SE+Starlight">Search</a>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Nails -->
+      <section class="card" data-section="Nails">
+        <h2>Nails <span class="badge">12 items</span></h2>
+        <ul>
+          <li data-name="Morovan Professional Natural Nail Prep Dehydrate and Acid-Free Primer" data-tags="amazon,nails,prep">
+            <input class="chk" type="checkbox" />
+            <div class="item">
+              <div class="name">Morovan Professional Natural Nail Prep Dehydrate + Acid-Free Primer</div>
+              <div class="meta"><span class="tag">Amazon</span><span class="tag">Prep</span></div>
+            </div>
+            <div class="actions"><a class="link" target="_blank" rel="noopener" href="https://www.amazon.com/s?k=Morovan+Professional+Natural+Nail+Prep+Dehydrate+Acid-Free+Primer">Search</a></div>
+          </li>
+
+          <li data-name="3D Nail Art Gel Clear and White Solid Builder Gel" data-tags="amazon,nails,gel">
+            <input class="chk" type="checkbox" />
+            <div class="item">
+              <div class="name">3D Nail Art Gel — clear & white solid builder gel</div>
+              <div class="meta"><span class="tag">Amazon</span><span class="tag">Builder gel</span></div>
+            </div>
+            <div class="actions"><a class="link" target="_blank" rel="noopener" href="https://www.amazon.com/s?k=3D+Nail+Art+Gel+Clear+White+Solid+Builder+Gel">Search</a></div>
+          </li>
+
+          <li data-name="Short Almond Nail Tips 240pcs" data-tags="amazon,nails,tips">
+            <input class="chk" type="checkbox" />
+            <div class="item">
+              <div class="name">Short Almond Nail Tips (240 pcs)</div>
+              <div class="meta"><span class="tag">Amazon</span><span class="tag">Tips</span></div>
+            </div>
+            <div class="actions"><a class="link" target="_blank" rel="noopener" href="https://www.amazon.com/s?k=Short+Almond+Nail+Tips+240pcs">Search</a></div>
+          </li>
+
+          <li data-name="Beetles 9 in 1 Nail Glue Gel" data-tags="amazon,nails,glue">
+            <input class="chk" type="checkbox" />
+            <div class="item">
+              <div class="name">Beetles 9-in-1 Nail Glue Gel</div>
+              <div class="meta"><span class="tag">Amazon</span><span class="tag">Glue</span></div>
+            </div>
+            <div class="actions"><a class="link" target="_blank" rel="noopener" href="https://www.amazon.com/s?k=Beetles+9+in+1+Nail+Glue+Gel">Search</a></div>
+          </li>
+
+          <li data-name="10 Pcs Rough Nail File 100/180 Grit" data-tags="amazon,nails,files">
+            <input class="chk" type="checkbox" />
+            <div class="item">
+              <div class="name">Rough Nail Files (10 pcs) — 100/180 grit</div>
+              <div class="meta"><span class="tag">Amazon</span><span class="tag">Files</span></div>
+            </div>
+            <div class="actions"><a class="link" target="_blank" rel="noopener" href="https://www.amazon.com/s?k=10+pcs+rough+nail+file+100+180+grit">Search</a></div>
+          </li>
+
+          <li data-name="UNA GELLA Short Almond Fake Nails 216pcs" data-tags="amazon,nails,tips">
+            <input class="chk" type="checkbox" />
+            <div class="item">
+              <div class="name">UNA GELLA Short Almond Fake Nails (216 pcs)</div>
+              <div class="meta"><span class="tag">Amazon</span><span class="tag">Tips</span></div>
+            </div>
+            <div class="actions"><a class="link" target="_blank" rel="noopener" href="https://www.amazon.com/s?k=UNA+GELLA+Short+Almond+Fake+Nails+216pcs">Search</a></div>
+          </li>
+
+          <li data-name="Electric Nail Drill File Professional 40000 RPM" data-tags="amazon,nails,drill">
+            <input class="chk" type="checkbox" />
+            <div class="item">
+              <div class="name">Electric Nail Drill (professional) — 40,000 RPM</div>
+              <div class="meta"><span class="tag">Amazon</span><span class="tag">Drill</span></div>
+            </div>
+            <div class="actions"><a class="link" target="_blank" rel="noopener" href="https://www.amazon.com/s?k=Electric+Nail+Drill+File+Professional+40000+RPM">Search</a></div>
+          </li>
+
+          <li data-name="MelodySusie Nail Drill Bits Set 7 pcs" data-tags="amazon,nails,bits">
+            <input class="chk" type="checkbox" />
+            <div class="item">
+              <div class="name">MelodySusie Nail Drill Bits Set (7 pcs)</div>
+              <div class="meta"><span class="tag">Amazon</span><span class="tag">Bits</span></div>
+            </div>
+            <div class="actions"><a class="link" target="_blank" rel="noopener" href="https://www.amazon.com/s?k=MelodySusie+Nail+Drill+Bits+Set+7+pcs">Search</a></div>
+          </li>
+
+          <li data-name="AORAEM Nail Lamp LED Nail Manicure Dryer Curing Light with black goose neck" data-tags="amazon,nails,lamp">
+            <input class="chk" type="checkbox" />
+            <div class="item">
+              <div class="name">AORAEM Nail Lamp — LED dryer/curing light (black goose-neck)</div>
+              <div class="meta"><span class="tag">Amazon</span><span class="tag">Lamp</span></div>
+            </div>
+            <div class="actions"><a class="link" target="_blank" rel="noopener" href="https://www.amazon.com/s?k=AORAEM+Nail+Lamp+LED+Manicure+Dryer+Curing+Light+black+goose+neck">Search</a></div>
+          </li>
+
+          <li data-name="Chrome Nail Powder Set 14 Colors" data-tags="amazon,nails,powder">
+            <input class="chk" type="checkbox" />
+            <div class="item">
+              <div class="name">Chrome Nail Powder Set (14 colors)</div>
+              <div class="meta"><span class="tag">Amazon</span><span class="tag">Chrome</span></div>
+            </div>
+            <div class="actions"><a class="link" target="_blank" rel="noopener" href="https://www.amazon.com/s?k=Chrome+Nail+Powder+Set+14+Colors">Search</a></div>
+          </li>
+
+          <li data-name="Beetles Clear Builder Gel for Nails 7 in 1" data-tags="amazon,nails,gel">
+            <input class="chk" type="checkbox" />
+            <div class="item">
+              <div class="name">Beetles Clear Builder Gel for Nails (7-in-1)</div>
+              <div class="meta"><span class="tag">Amazon</span><span class="tag">Builder gel</span></div>
+            </div>
+            <div class="actions"><a class="link" target="_blank" rel="noopener" href="https://www.amazon.com/s?k=Beetles+Clear+Builder+Gel+for+Nails+7+in+1">Search</a></div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Room decor -->
+      <section class="card span6" data-section="Room Decor">
+        <h2>Room Decor <span class="badge">3 items</span></h2>
+        <ul>
+          <li data-name="Bedsure GentleSoft Black Throw Blanket" data-tags="amazon,decor,blanket">
+            <input class="chk" type="checkbox" />
+            <div class="item">
+              <div class="name">Bedsure GentleSoft black throw blanket</div>
+              <div class="meta"><span class="tag">Amazon</span><span class="tag">Blanket</span></div>
+            </div>
+            <div class="actions"><a class="link" target="_blank" rel="noopener" href="https://www.amazon.com/s?k=Bedsure+GentleSoft+Black+Throw+Blanket">Search</a></div>
+          </li>
+
+          <li data-name="Jellycat Bashful Cream Bunny Stuffed Animal" data-tags="amazon,decor,stuffed">
+            <input class="chk" type="checkbox" />
+            <div class="item">
+              <div class="name">Jellycat Bashful cream bunny stuffed animal</div>
+              <div class="meta"><span class="tag">Amazon</span><span class="tag">Stuffed</span></div>
+            </div>
+            <div class="actions"><a class="link" target="_blank" rel="noopener" href="https://www.amazon.com/s?k=Jellycat+Bashful+Cream+Bunny+Stuffed+Animal">Search</a></div>
+          </li>
+
+          <li data-name="tape LED lights" data-tags="decor,led">
+            <input class="chk" type="checkbox" />
+            <div class="item">
+              <div class="name">Tape LED lights</div>
+              <div class="meta"><span class="tag">LED</span><span class="tag">Room lights</span></div>
+            </div>
+            <div class="actions"><a class="link" target="_blank" rel="noopener" href="https://www.amazon.com/s?k=LED+strip+lights+tape">Search</a></div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Clothes -->
+      <section class="card span6" data-section="Clothes">
+        <h2>Clothes <span class="badge">Sizes listed</span></h2>
+        <ul>
+          <li data-name="Shirts size 12 Pants size 12-14" data-tags="clothes,sizes">
+            <input class="chk" type="checkbox" />
+            <div class="item">
+              <div class="name"><strong>Sizes:</strong> Shirts: 12 • Pants: 12–14</div>
+              <div class="meta"><span class="tag">Not Amazon-only</span></div>
+            </div>
+          </li>
+          <li data-name="Number tees" data-tags="clothes,shirts">
+            <input class="chk" type="checkbox" />
+            <div class="item"><div class="name">Number tees</div><div class="meta"><span class="tag">Tops</span></div></div>
+          </li>
+          <li data-name="Hoodies beachy or plain" data-tags="clothes,hoodie">
+            <input class="chk" type="checkbox" />
+            <div class="item"><div class="name">Hoodies (beachy or plain)</div><div class="meta"><span class="tag">Hoodie</span></div></div>
+          </li>
+          <li data-name="Plain baby tees tanks" data-tags="clothes,tops">
+            <input class="chk" type="checkbox" />
+            <div class="item"><div class="name">Plain baby tees / tanks</div><div class="meta"><span class="tag">Tops</span></div></div>
+          </li>
+          <li data-name="Sweat sets beachy or plain" data-tags="clothes,sweats">
+            <input class="chk" type="checkbox" />
+            <div class="item"><div class="name">Sweat sets (beachy or plain)</div><div class="meta"><span class="tag">Sets</span></div></div>
+          </li>
+          <li data-name="Baggy jeans light wash dark wash black" data-tags="clothes,jeans">
+            <input class="chk" type="checkbox" />
+            <div class="item"><div class="name">Baggy jeans (light wash / dark wash / black)</div><div class="meta"><span class="tag">Jeans</span></div></div>
+          </li>
+          <li data-name="Oversized t-shirts" data-tags="clothes,shirts">
+            <input class="chk" type="checkbox" />
+            <div class="item"><div class="name">Oversized t-shirts</div><div class="meta"><span class="tag">Tops</span></div></div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Shoes -->
+      <section class="card span6" data-section="Shoes">
+        <h2>Shoes <span class="badge">Size 6.5</span></h2>
+        <ul>
+          <li data-name="Shoe size 6.5" data-tags="shoes,size">
+            <input class="chk" type="checkbox" />
+            <div class="item">
+              <div class="name"><strong>Size:</strong> 6.5</div>
+              <div class="meta"><span class="tag">Not Amazon-only</span></div>
+            </div>
+          </li>
+          <li data-name="UGG ultra mini classic boot or similar" data-tags="shoes,boots">
+            <input class="chk" type="checkbox" />
+            <div class="item"><div class="name">UGG Ultra Mini Classic Boot (doesn’t have to be UGG brand)</div><div class="meta"><span class="tag">Boots</span></div></div>
+          </li>
+          <li data-name="Black and white Sambas" data-tags="shoes,sneakers">
+            <input class="chk" type="checkbox" />
+            <div class="item"><div class="name">Black & white Sambas</div><div class="meta"><span class="tag">Sneakers</span></div></div>
+          </li>
+          <li data-name="Grey and white Campus 00s" data-tags="shoes,sneakers">
+            <input class="chk" type="checkbox" />
+            <div class="item"><div class="name">Grey & white Campus 00s</div><div class="meta"><span class="tag">Sneakers</span></div></div>
+          </li>
+          <li data-name="Birkenstock Clogs" data-tags="shoes,clogs">
+            <input class="chk" type="checkbox" />
+            <div class="item"><div class="name">Birkenstock clogs</div><div class="meta"><span class="tag">Clogs</span></div></div>
+          </li>
+          <li data-name="Nike crew socks" data-tags="shoes,socks">
+            <input class="chk" type="checkbox" />
+            <div class="item"><div class="name">Nike crew socks</div><div class="meta"><span class="tag">Socks</span></div></div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Cosmetics -->
+      <section class="card" data-section="Cosmetics">
+        <h2>Cosmetics <span class="badge">Skincare + makeup</span></h2>
+        <ul>
+          <li data-name="Bio ionic 1 inch curling iron" data-tags="cosmetics,hair">
+            <input class="chk" type="checkbox" />
+            <div class="item"><div class="name">Bio Ionic 1" curling iron</div><div class="meta"><span class="tag">Hair</span></div></div>
+          </li>
+          <li data-name="Summer Fridays lip balm Pink sugar" data-tags="cosmetics,lips">
+            <input class="chk" type="checkbox" />
+            <div class="item"><div class="name">Summer Fridays lip balm — Pink Sugar</div><div class="meta"><span class="tag">Lips</span></div></div>
+          </li>
+          <li data-name="Rare Beauty bronzer stick Always Sunny" data-tags="cosmetics,makeup">
+            <input class="chk" type="checkbox" />
+            <div class="item"><div class="name">Rare Beauty bronzer stick — Always Sunny</div><div class="meta"><span class="tag">Makeup</span></div></div>
+          </li>
+          <li data-name="Saie dew blush Dreamy" data-tags="cosmetics,makeup">
+            <input class="chk" type="checkbox" />
+            <div class="item"><div class="name">Saie Dew Blush — Dreamy</div><div class="meta"><span class="tag">Makeup</span></div></div>
+          </li>
+          <li data-name="Benefit brow gel clear" data-tags="cosmetics,brows">
+            <input class="chk" type="checkbox" />
+            <div class="item"><div class="name">Benefit brow gel — clear</div><div class="meta"><span class="tag">Brows</span></div></div>
+          </li>
+          <li data-name="CeraVe foaming cleanser" data-tags="cosmetics,skincare">
+            <input class="chk" type="checkbox" />
+            <div class="item"><div class="name">CeraVe foaming cleanser</div><div class="meta"><span class="tag">Skincare</span></div></div>
+          </li>
+          <li data-name="Byoma milky toner" data-tags="cosmetics,skincare">
+            <input class="chk" type="checkbox" />
+            <div class="item"><div class="name">Byoma milky toner</div><div class="meta"><span class="tag">Skincare</span></div></div>
+          </li>
+          <li data-name="Glow Recipe dew drops" data-tags="cosmetics,skincare">
+            <input class="chk" type="checkbox" />
+            <div class="item"><div class="name">Glow Recipe dew drops</div><div class="meta"><span class="tag">Skincare</span></div></div>
+          </li>
+          <li data-name="CeraVe moisturizing cream" data-tags="cosmetics,skincare">
+            <input class="chk" type="checkbox" />
+            <div class="item"><div class="name">CeraVe moisturizing cream</div><div class="meta"><span class="tag">Skincare</span></div></div>
+          </li>
+          <li data-name="Bubble SPF 40" data-tags="cosmetics,spf">
+            <input class="chk" type="checkbox" />
+            <div class="item"><div class="name">Bubble SPF 40</div><div class="meta"><span class="tag">SPF</span></div></div>
+          </li>
+          <li data-name="Sol de Janeiro body mist scents 62 68 40 48 76" data-tags="cosmetics,fragrance">
+            <input class="chk" type="checkbox" />
+            <div class="item">
+              <div class="name">Sol de Janeiro body mist — scents: 62, 68, 40, 48, 76</div>
+              <div class="meta"><span class="tag">Fragrance</span></div>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+    </main>
+
+    <footer>
+      <div>Tip: Want exact products? Replace each “Search” link with the item’s direct URL.</div>
+      <div>Made as a single-file page you can text/email to anyone.</div>
+    </footer>
+  </div>
+
+  <script>
+    // --- Helpers ---
+    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+    const storageKey = "wishlist_bought_v1";
+
+    // --- Bought state (localStorage) ---
+    const saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
+
+    $$(".card li").forEach((li, idx) => {
+      const id = li.dataset.name || ("item_" + idx);
+      li.dataset.id = id;
+      const chk = li.querySelector(".chk");
+      chk.checked = !!saved[id];
+      if (chk.checked) li.classList.add("bought");
+
+      chk.addEventListener("change", () => {
+        saved[id] = chk.checked;
+        localStorage.setItem(storageKey, JSON.stringify(saved));
+        li.classList.toggle("bought", chk.checked);
+      });
+    });
+
+    // --- Search filter ---
+    const search = document.getElementById("search");
+    search.addEventListener("input", () => {
+      const q = search.value.trim().toLowerCase();
+      $$(".card li").forEach(li => {
+        const hay = (li.dataset.name + " " + (li.dataset.tags || "")).toLowerCase();
+        li.style.display = hay.includes(q) ? "" : "none";
+      });
+      // hide empty sections
+      $$(".card").forEach(card => {
+        const anyVisible = $$("li", card).some(li => li.style.display !== "none");
+        card.style.display = anyVisible ? "" : "none";
+      });
+    });
+
+    // --- Copy list ---
+    document.getElementById("copyBtn").addEventListener("click", async () => {
+      const sections = $$(".card").map(card => {
+        const title = card.getAttribute("data-section") || card.querySelector("h2")?.innerText?.trim() || "Section";
+        const items = $$("li", card)
+          .map(li => li.querySelector(".name")?.innerText?.trim())
+          .filter(Boolean);
+        return { title, items };
+      }).filter(s => s.items.length);
+
+      const text = sections.map(s => {
+        return `• ${s.title}\n` + s.items.map(i => `  - ${i}`).join("\n");
+      }).join("\n\n");
+
+      try{
+        await navigator.clipboard.writeText(text);
+        alert("Copied!");
+      }catch(e){
+        prompt("Copy this text:", text);
+      }
+    });
+
+    // --- Reset bought ---
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      if (!confirm("Clear all bought checkmarks on this device?")) return;
+      localStorage.removeItem(storageKey);
+      $$(".card li").forEach(li => {
+        const chk = li.querySelector(".chk");
+        chk.checked = false;
+        li.classList.remove("bought");
+      });
+    });
+  </script>
+</body>
+</html>
